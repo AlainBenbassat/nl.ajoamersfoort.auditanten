@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/auditant-toelaten</path>
+    <page_callback>CRM_Auditanten_Form_AuditantToelaten</page_callback>
+    <title>AuditantToelaten</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
