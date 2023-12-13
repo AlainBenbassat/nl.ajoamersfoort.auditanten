@@ -113,6 +113,7 @@ class CRM_Auditanten_Contact {
   private static function createContact($firstName, $lastName, $email, $phone) {
     $contactId = \Civi\Api4\Contact::create(FALSE)
       ->addValue('contact_type', 'Individual')
+      ->addValue('contact_sub_type', ['Ouder'])
       ->addValue('first_name', $firstName)
       ->addValue('last_name', $lastName)
       ->execute()->first()['id'];
