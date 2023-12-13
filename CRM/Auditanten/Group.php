@@ -2,6 +2,7 @@
 
 class CRM_Auditanten_Group {
   public const GROUP_Auditanten = 4;
+  public const GROUP_Ouders = 30;
   public const GROUP_Afgewezen_auditanten = 64;
   public const GROUP_Orkestleden_huidige = 6;
 
@@ -28,6 +29,14 @@ class CRM_Auditanten_Group {
     ";
 
     CRM_Core_DAO::executeQuery($sql);
+  }
+
+  public static function addToParentsGroup($contactId) {
+    \Civi\Api4\GroupContact::create(FALSE)
+      ->addValue('contact_id', $contactId)
+      ->addValue('group_id', self::GROUP_Ouders)
+      ->addValue('status', 'Added')
+      ->execute();
   }
 
 }

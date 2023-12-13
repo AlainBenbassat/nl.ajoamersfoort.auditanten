@@ -135,6 +135,8 @@ class CRM_Auditanten_Contact {
         ->execute();
     }
 
+    CRM_Auditanten_Group::addToParentsGroup($contactId);
+
     return $contactId;
   }
 
