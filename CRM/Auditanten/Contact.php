@@ -53,8 +53,14 @@ class CRM_Auditanten_Contact {
     }
   }
 
-  private static function createParentChildRelationship() {
+  private static function createParentChildRelationship($parentContactId, $contactId) {
+    $childOfRelTypeId = 1;
 
+    $results = \Civi\Api4\Relationship::create(TRUE)
+      ->addValue('relationship_type_id', $childOfRelTypeId)
+      ->addValue('contact_id_a', $contactId)
+      ->addValue('contact_id_b', $parentContactId)
+      ->execute();
   }
 
   private static function getContactById($contactId) {
