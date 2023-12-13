@@ -19,12 +19,14 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
   public function postProcess(): void {
     try {
       $values = $this->exportValues();
+
       if ($values['accept_candidate'] == "1") {
         CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id']);
       }
       else {
         CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
       }
+
       parent::postProcess();
     }
     catch (Exception $e) {

@@ -19,20 +19,27 @@ class CRM_Auditanten_Contact {
 
   public static function convertToOrchestraMember($contactId) {
     CRM_Auditanten_Group::moveContactToCurrentOrchestraMembers($contactId);
+    CRM_Core_Session::setStatus('Auditant toegevoegd aan groep huidige orkestleden');
 
+    CRM_Auditanten_Membership::add($contactId);
+    CRM_Core_Session::setStatus('Lidmaatschap aangemaakt voor auditant');
+
+    // add parents
     $contact = self::getContactById($contactId);
 
     $parentContactId = self::createContactForParent($contact, 1);
     if ($parentContactId) {
       self::createParentChildRelationship($parentContactId, $contactId);
+      CRM_Core_Session::setStatus('Ouder 1 aangemaakt als relatie');
     }
 
     $parentContactId = self::createContactForParent($contact, 2);
     if ($parentContactId) {
       self::createParentChildRelationship($parentContactId, $contactId);
+      CRM_Core_Session::setStatus('Ouder 2 aangemaakt als relatie');
     }
 
-    CRM_Auditanten_Group::moveContactToCurrentOrchestraMembers($contactId);
+
   }
 
   public static function convertToExAuditioner($contactId) {
