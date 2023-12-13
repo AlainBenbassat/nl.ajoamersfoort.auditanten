@@ -17,16 +17,19 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
   }
 
   public function postProcess(): void {
-    $values = $this->exportValues();
-
-    if ($values['accept_candidate'] == "1") {
-      CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id']);
+    try {
+      $values = $this->exportValues();
+      if ($values['accept_candidate'] == "1") {
+        CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id']);
+      }
+      else {
+        CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
+      }
+      parent::postProcess();
     }
-    else {
-      CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
+    catch (Exception $e) {
+      CRM_Core_Session::setStatus($e->getMessage(),'Fout', 'error');
     }
-
-    parent::postProcess();
   }
 
   private function addFormElements($contactId) {
