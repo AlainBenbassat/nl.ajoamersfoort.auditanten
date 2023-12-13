@@ -67,9 +67,9 @@ class CRM_Auditanten_Contact {
 
   private static function existsRelationship($childOfRelTypeId, $contactId, $parentContactId) {
     $rel = \Civi\Api4\Relationship::get(TRUE)
-      ->addValue('relationship_type_id', $childOfRelTypeId)
-      ->addValue('contact_id_a', $contactId)
-      ->addValue('contact_id_b', $parentContactId)
+      ->addWhere('relationship_type_id', '=', $childOfRelTypeId)
+      ->addWhere('contact_id_a', '=', $contactId)
+      ->addWhere('contact_id_b', '=', $parentContactId)
       ->execute()
       ->first();
 
