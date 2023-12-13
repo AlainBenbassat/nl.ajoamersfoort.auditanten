@@ -27,7 +27,7 @@ class CRM_Auditanten_Contact {
       self::createParentChildRelationship($parentContactId, $contactId);
     }
 
-    $parentContactId = self::createContactForParent($contactId, 2);
+    $parentContactId = self::createContactForParent($contact, 2);
     if ($parentContactId) {
       self::createParentChildRelationship($parentContactId, $contactId);
     }
