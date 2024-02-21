@@ -51,12 +51,21 @@ class CRM_Auditanten_Contact {
     $phone = $contact["Extra_orkestlid_info.Telefoon_ouder_$parentNumber"];
     $email = $contact["Extra_orkestlid_info.E_mail_ouder_$parentNumber"];
 
-    if (!empty($firstName . $lastName . $phone . $email)) {
-      return self::getOrCreate($firstName, $lastName, $phone, $email);
-    }
-    else {
+    if (empty($firstName) && empty($lastName)) {
       return FALSE;
     }
+
+    if (empty($firstName) && !empty($lastName)) {
+      CRM_Core_Session::setStatus('Kan ouder niet automatisch aanmaken. Het veld voornaam is niet ingevuld.');
+      return FALSE;
+    }
+
+    if (!empty($firstName) && empty($lastName)) {
+      CRM_Core_Session::setStatus('Kan ouder niet automatisch aanmaken. Het veld naam is niet ingevuld.');
+      return FALSE;
+    }
+
+    return self::getOrCreate($firstName, $lastName, $phone, $email);
   }
 
   private static function createParentChildRelationship($parentContactId, $contactId) {

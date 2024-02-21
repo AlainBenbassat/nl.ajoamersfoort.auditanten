@@ -11,7 +11,43 @@ class CRM_Auditanten_Group {
   }
 
   public static function moveContactToCurrentOrchestraMembers($contactId) {
-    self::swapGroup($contactId, self::GROUP_Auditanten, self::GROUP_Orkestleden_huidige);
+    if (self::isGroupMember($contactId, self::GROUP_Orkestleden_huidige)) {
+      self::changeGroupMemberStatus($contactId, self::GROUP_Orkestleden_huidige, 'Added');
+      self::removeFromGroup($contactId, self::GROUP_Auditanten);
+    }
+    else {
+      self::swapGroup($contactId, self::GROUP_Auditanten, self::GROUP_Orkestleden_huidige);
+    }
+  }
+
+  private static function isGroupMember($contactId, $group) {
+    $groupContact = \Civi\Api4\GroupContact::get(FALSE)
+      ->addWhere('group_id', '=', $group)
+      ->addWhere('contact_id', '=', $contactId)
+      ->execute()
+      ->first();
+
+    if ($groupContact) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  private static function changeGroupMemberStatus($contactId, $group, $status) {
+    \Civi\Api4\GroupContact::update(FALSE)
+      ->addValue('status', $status)
+      ->addWhere('group_id', '=', $group)
+      ->addWhere('contact_id', '=', $contactId)
+      ->execute();
+  }
+
+  private static function removeFromGroup($contactId, $group) {
+    \Civi\Api4\GroupContact::delete(FALSE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->addWhere('group_id', '=', $group)
+      ->execute();
   }
 
   private static function swapGroup($contactId, $oldGroup, $newGroup) {

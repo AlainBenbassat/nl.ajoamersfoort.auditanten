@@ -11,14 +11,13 @@ function auditanten_civicrm_summaryActions(&$actions, $contactID) {
   foreach ($unusedActions as $unusedAction) {
     unset($actions[$unusedAction]);
   }
-
   unset($actions['otherActions']['print']);
   unset($actions['otherActions']['dashboard']);
   unset($actions['otherActions']['vcard']);
 
   if (CRM_Auditanten_Contact::isAuditioner($contactID)) {
     // add menu
-    $actions['auditant_toelaten'] = [
+    $actions['otherActions']['auditant_toelaten'] = [
       'title' => 'Auditant toelaten?',
       'weight' => 60,
       'ref' => 'auditant_toelaten',
