@@ -19,9 +19,8 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
   public function postProcess(): void {
     try {
       $values = $this->exportValues();
-
       if ($values['accept_candidate'] == "1") {
-        CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id']);
+        CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id'], $values['orchestra_group']);
       }
       else {
         CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
@@ -41,7 +40,20 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
       ->execute()
       ->single()['display_name'];
 
-    $this->addYesNo('accept_candidate', "$candidateName toelaten?", TRUE, TRUE);
+    $this->addYesNo('accept_candidate', "$candidateName toelaten als orkestlid?", TRUE, TRUE);
+
+    $orkestGroepen = [];
+    $optionValues = \Civi\Api4\OptionValue::get(FALSE)
+      ->addSelect('value', 'label')
+      ->addWhere('option_group_id:name', '=', 'orkestgrplst_20160217162031')
+      ->addWhere('is_active', '=', TRUE)
+      ->execute();
+    foreach ($optionValues as $optionValue) {
+      echo $optionValue['name'];
+      $orkestGroepen[$optionValue['value']] = $optionValue['label'];
+    }
+    $this->add('select', 'orchestra_group', 'Zo ja, in welke orkestgroep?', $orkestGroepen);
+
     $this->add('hidden', 'contact_id', $contactId);
   }
 

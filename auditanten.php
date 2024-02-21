@@ -6,6 +6,16 @@ use CRM_Auditanten_ExtensionUtil as E;
 // phpcs:enable
 
 function auditanten_civicrm_summaryActions(&$actions, $contactID) {
+  // remove actions AJO does not use
+  $unusedActions = ['activity', 'view', 'add', 'delete', 'participant', 'contribution', 'rel', 'note', 'group', 'tag', 'membership'];
+  foreach ($unusedActions as $unusedAction) {
+    unset($actions[$unusedAction]);
+  }
+
+  unset($actions['otherActions']['print']);
+  unset($actions['otherActions']['dashboard']);
+  unset($actions['otherActions']['vcard']);
+
   if (CRM_Auditanten_Contact::isAuditioner($contactID)) {
     // add menu
     $actions['auditant_toelaten'] = [

@@ -17,8 +17,9 @@ class CRM_Auditanten_Contact {
     }
   }
 
-  public static function convertToOrchestraMember($contactId) {
+  public static function convertToOrchestraMember($contactId, $orchestraGroupValue) {
     CRM_Auditanten_Group::moveContactToCurrentOrchestraMembers($contactId);
+    self::setOrchestraGroup($contactId, $orchestraGroupValue);
     CRM_Core_Session::setStatus('Auditant toegevoegd aan groep huidige orkestleden');
 
     CRM_Auditanten_Membership::add($contactId);
@@ -38,8 +39,6 @@ class CRM_Auditanten_Contact {
       self::createParentChildRelationship($parentContactId, $contactId);
       CRM_Core_Session::setStatus('Ouder 2 aangemaakt als relatie');
     }
-
-
   }
 
   public static function convertToExAuditioner($contactId) {
@@ -108,6 +107,13 @@ class CRM_Auditanten_Contact {
     }
 
     return self::createContact($firstName, $lastName, $email, $phone);
+  }
+
+  public static function setOrchestraGroup($contactId, $ochestraGroupValue) {
+    \Civi\Api4\Contact::update(FALSE)
+      ->addValue('Extra_orkestlid_info.Orkestgrplst', $ochestraGroupValue)
+      ->addWhere('id', '=', $contactId)
+      ->execute();
   }
 
   private static function createContact($firstName, $lastName, $email, $phone) {
