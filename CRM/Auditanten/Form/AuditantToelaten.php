@@ -20,11 +20,14 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
     try {
       $values = $this->exportValues();
       if ($values['accept_candidate'] == "1") {
-        CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id'], $values['orchestra_group']);
+        $contact = CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id'], $values['orchestra_group']);
+        $userId = CRM_Auditanten_User::create($contact);
       }
       else {
         CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
       }
+
+      CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $values['contact_id']));
 
       parent::postProcess();
     }

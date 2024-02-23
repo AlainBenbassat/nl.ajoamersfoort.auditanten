@@ -18,27 +18,32 @@ class CRM_Auditanten_Contact {
   }
 
   public static function convertToOrchestraMember($contactId, $orchestraGroupValue) {
-    CRM_Auditanten_Group::moveContactToCurrentOrchestraMembers($contactId);
-    self::setOrchestraGroup($contactId, $orchestraGroupValue);
-    CRM_Core_Session::setStatus('Auditant toegevoegd aan groep huidige orkestleden');
-
-    CRM_Auditanten_Membership::add($contactId);
-    CRM_Core_Session::setStatus('Lidmaatschap aangemaakt voor auditant');
-
-    // add parents
     $contact = self::getContactById($contactId);
 
+    // step 1: move from auditanten to orkestleden (huidig) + assign instrument group
+    CRM_Auditanten_Group::moveContactToCurrentOrchestraMembers($contactId);
+    self::setOrchestraGroup($contactId, $orchestraGroupValue);
+    CRM_Core_Session::setStatus('Auditant toegevoegd aan groep huidige orkestleden', '', 'success');
+
+    // step 2: add orchestra membership
+    CRM_Auditanten_Membership::add($contactId);
+    CRM_Core_Session::setStatus('Lidmaatschap aangemaakt voor auditant', '', 'success');
+
+    // step 3: add parent 1
     $parentContactId = self::createContactForParent($contact, 1);
     if ($parentContactId) {
       self::createParentChildRelationship($parentContactId, $contactId);
-      CRM_Core_Session::setStatus('Ouder 1 aangemaakt als relatie');
+      CRM_Core_Session::setStatus('Ouder 1 aangemaakt als relatie', '', 'success');
     }
 
+    // step 4: add parent 2
     $parentContactId = self::createContactForParent($contact, 2);
     if ($parentContactId) {
       self::createParentChildRelationship($parentContactId, $contactId);
-      CRM_Core_Session::setStatus('Ouder 2 aangemaakt als relatie');
+      CRM_Core_Session::setStatus('Ouder 2 aangemaakt als relatie', '', 'success');
     }
+
+    return $contact;
   }
 
   public static function convertToExAuditioner($contactId) {
@@ -56,12 +61,12 @@ class CRM_Auditanten_Contact {
     }
 
     if (empty($firstName) && !empty($lastName)) {
-      CRM_Core_Session::setStatus('Kan ouder niet automatisch aanmaken. Het veld voornaam is niet ingevuld.');
+      CRM_Core_Session::setStatus('Kan ouder niet automatisch aanmaken. Het veld voornaam is niet ingevuld.', '', 'warning');
       return FALSE;
     }
 
     if (!empty($firstName) && empty($lastName)) {
-      CRM_Core_Session::setStatus('Kan ouder niet automatisch aanmaken. Het veld naam is niet ingevuld.');
+      CRM_Core_Session::setStatus('Kan ouder niet automatisch aanmaken. Het veld naam is niet ingevuld.', '', 'warning');
       return FALSE;
     }
 
@@ -96,9 +101,9 @@ class CRM_Auditanten_Contact {
     }
   }
 
-  private static function getContactById($contactId) {
+  public static function getContactById($contactId) {
     return \Civi\Api4\Contact::get(FALSE)
-      ->addSelect('*', 'custom.*')
+      ->addSelect('*', 'custom.*', 'email_primary.email')
       ->addWhere('id', '=', $contactId)
       ->execute()
       ->first();
