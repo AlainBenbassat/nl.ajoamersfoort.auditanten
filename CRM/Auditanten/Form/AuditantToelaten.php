@@ -22,6 +22,7 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
       if ($values['accept_candidate'] == "1") {
         $contact = CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id'], $values['orchestra_group']);
         $userId = CRM_Auditanten_User::create($contact);
+        CRM_Auditanten_Contact::setLinkBetweenUserAndContact($userId, $values['contact_id']);
       }
       else {
         CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);

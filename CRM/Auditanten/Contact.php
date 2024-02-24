@@ -50,6 +50,28 @@ class CRM_Auditanten_Contact {
     CRM_Auditanten_Group::moveContactToExAuditioners($contactId);
   }
 
+  public static function setLinkBetweenUserAndContact($userId, $contactId) {
+    $linkExists = \Civi\Api4\UFMatch::get(FALSE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->execute()
+      ->first();
+
+    if ($linkExists) {
+      \Civi\Api4\UFMatch::update(FALSE)
+        ->addValue('uf_id', $userId)
+        ->addWhere('contact_id', '=', $contactId)
+        ->execute();
+    }
+    else {
+      \Civi\Api4\UFMatch::create(FALSE)
+        ->addValue('uf_id', $userId)
+        ->addValue('contact_id', $contactId)
+        ->execute();
+    }
+
+    CRM_Core_Session::setStatus('Link tussen Wordpress gebruiker en CiviCRM contact aangemaakt', '', 'success');
+  }
+
   private static function createContactForParent($contact, $parentNumber) {
     $firstName = $contact["Extra_orkestlid_info.Voornaam_ouder_$parentNumber"];
     $lastName = $contact["Extra_orkestlid_info.Naam_ouder_$parentNumber"];
