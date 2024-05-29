@@ -5,6 +5,7 @@ class CRM_Auditanten_Contact {
   public static function isAuditioner($contactId) {
     $groupContact = \Civi\Api4\GroupContact::get(FALSE)
       ->addWhere('group_id:label', '=', 'Auditanten')
+      ->addWhere('status', '=', 'Added')
       ->addWhere('contact_id', '=', $contactId)
       ->execute()
       ->first();
