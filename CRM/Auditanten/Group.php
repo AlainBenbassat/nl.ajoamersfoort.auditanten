@@ -2,6 +2,7 @@
 
 class CRM_Auditanten_Group {
   public const GROUP_Auditanten = 4;
+  public const GROUP_Toegelaten_auditanten = 62;
   public const GROUP_Ouders = 30;
   public const GROUP_Afgewezen_auditanten = 64;
   public const GROUP_Orkestleden_huidige = 6;
@@ -17,6 +18,10 @@ class CRM_Auditanten_Group {
     }
     else {
       self::swapGroup($contactId, self::GROUP_Auditanten, self::GROUP_Orkestleden_huidige);
+    }
+
+    if (!self::isGroupMember($contactId, self::GROUP_Toegelaten_auditanten)) {
+      self::addToGroup($contactId, self::GROUP_Toegelaten_auditanten);
     }
   }
 
@@ -47,6 +52,14 @@ class CRM_Auditanten_Group {
     \Civi\Api4\GroupContact::delete(FALSE)
       ->addWhere('contact_id', '=', $contactId)
       ->addWhere('group_id', '=', $group)
+      ->execute();
+  }
+
+  private static function addToGroup($contactId, $group) {
+    \Civi\Api4\GroupContact::create(FALSE)
+      ->addValue('status', 'Added')
+      ->addWhere('group_id', '=', $group)
+      ->addWhere('contact_id', '=', $contactId)
       ->execute();
   }
 
