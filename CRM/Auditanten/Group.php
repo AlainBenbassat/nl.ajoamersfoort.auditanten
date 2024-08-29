@@ -58,8 +58,8 @@ class CRM_Auditanten_Group {
   private static function addToGroup($contactId, $group) {
     \Civi\Api4\GroupContact::create(FALSE)
       ->addValue('status', 'Added')
-      ->addWhere('group_id', '=', $group)
-      ->addWhere('contact_id', '=', $contactId)
+      ->addValue('group_id', $group)
+      ->addValue('contact_id', $contactId)
       ->execute();
   }
 
