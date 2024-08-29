@@ -17,7 +17,8 @@ class CRM_Auditanten_Group {
       self::removeFromGroup($contactId, self::GROUP_Auditanten);
     }
     else {
-      self::swapGroup($contactId, self::GROUP_Auditanten, self::GROUP_Orkestleden_huidige);
+      self::addToGroup($contactId, self::GROUP_Orkestleden_huidige);
+      self::changeGroupMemberStatus($contactId, self::GROUP_Auditanten, 'Removed');
     }
 
     if (!self::isGroupMember($contactId, self::GROUP_Toegelaten_auditanten)) {
