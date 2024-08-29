@@ -8,13 +8,14 @@ class CRM_Auditanten_Group {
   public const GROUP_Orkestleden_huidige = 6;
 
   public static function moveContactToExAuditioners($contactId) {
-    self::swapGroup($contactId, self::GROUP_Auditanten, self::GROUP_Afgewezen_auditanten);
+    self::changeGroupMemberStatus($contactId, self::GROUP_Auditanten, 'Removed');
+    self::addToGroup($contactId, self::GROUP_Afgewezen_auditanten);
   }
 
   public static function moveContactToCurrentOrchestraMembers($contactId) {
     if (self::isGroupMember($contactId, self::GROUP_Orkestleden_huidige)) {
       self::changeGroupMemberStatus($contactId, self::GROUP_Orkestleden_huidige, 'Added');
-      self::removeFromGroup($contactId, self::GROUP_Auditanten);
+      self::changeGroupMemberStatus($contactId, self::GROUP_Auditanten, 'Removed');
     }
     else {
       self::addToGroup($contactId, self::GROUP_Orkestleden_huidige);
