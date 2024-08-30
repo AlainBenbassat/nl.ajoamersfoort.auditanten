@@ -27,7 +27,6 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
       }
       else {
         CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
-        CRM_Auditanten_Contact::sendMailRejected($values['contact_id']);
       }
 
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $values['contact_id']));

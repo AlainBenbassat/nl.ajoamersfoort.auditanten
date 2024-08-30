@@ -206,14 +206,6 @@ class CRM_Auditanten_Contact {
     ]);
   }
 
-  public static function sendMailRejected($contactId) {
-    $result = civicrm_api3('Email', 'send', [
-      'contact_id' => $contactId,
-      'template_id' => 120,
-      'from_email_option' => 1,
-    ]);
-  }
-
   public static function sendMailRetired($contactId) {
     $result = civicrm_api3('Email', 'send', [
       'contact_id' => $contactId,
