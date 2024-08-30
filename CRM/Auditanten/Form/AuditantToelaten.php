@@ -23,9 +23,11 @@ class CRM_Auditanten_Form_AuditantToelaten extends CRM_Core_Form {
         $contact = CRM_Auditanten_Contact::convertToOrchestraMember($values['contact_id'], $values['orchestra_group']);
         $userId = CRM_Auditanten_User::create($contact);
         CRM_Auditanten_Contact::setLinkBetweenUserAndContact($userId, $values['contact_id']);
+        CRM_Auditanten_Contact::sendMailAdmitted($values['contact_id']);
       }
       else {
         CRM_Auditanten_Contact::convertToExAuditioner($values['contact_id']);
+        CRM_Auditanten_Contact::sendMailRejected($values['contact_id']);
       }
 
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $values['contact_id']));

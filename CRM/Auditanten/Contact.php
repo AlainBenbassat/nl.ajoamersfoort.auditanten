@@ -197,4 +197,28 @@ class CRM_Auditanten_Contact {
       return FALSE;
     }
   }
+
+  public static function sendMailAdmitted($contactId) {
+    $result = civicrm_api3('Email', 'send', [
+      'contact_id' => $contactId,
+      'template_id' => 119,
+      'from_email_option' => 1, // info@
+    ]);
+  }
+
+  public static function sendMailRejected($contactId) {
+    $result = civicrm_api3('Email', 'send', [
+      'contact_id' => $contactId,
+      'template_id' => 120,
+      'from_email_option' => 1,
+    ]);
+  }
+
+  public static function sendMailRetired($contactId) {
+    $result = civicrm_api3('Email', 'send', [
+      'contact_id' => $contactId,
+      'template_id' => 121,
+      'from_email_option' => 1,
+    ]);
+  }
 }

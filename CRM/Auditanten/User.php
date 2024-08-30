@@ -17,6 +17,7 @@ class CRM_Auditanten_User {
       $userId = wp_create_user($contact['display_name'], wp_generate_password(20), $contact['email_primary.email']);
       $user = new WP_User($userId);
       $user->add_role('orkestlid');
+      retrieve_password($user->user_login); //sends password reset link
       CRM_Core_Session::setStatus('Nieuwe Wordpress gebruiker ' . $user->user_login . ' aangemaakt en rol "Orkestlid" toegekend', '', 'success');
     }
 
