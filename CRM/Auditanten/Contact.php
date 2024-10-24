@@ -23,6 +23,7 @@ class CRM_Auditanten_Contact {
 
     // step 1: move from auditanten to orkestleden (huidig) + assign instrument group
     CRM_Auditanten_Group::moveContactToCurrentOrchestraMembers($contactId);
+    self::updateOrchestraMemberYear($contactId);
     self::setOrchestraGroup($contactId, $orchestraGroupValue);
     CRM_Core_Session::setStatus('Auditant toegevoegd aan groep huidige orkestleden', '', 'success');
 
@@ -149,6 +150,13 @@ class CRM_Auditanten_Contact {
   public static function setOrchestraGroup($contactId, $ochestraGroupValue) {
     \Civi\Api4\Contact::update(FALSE)
       ->addValue('Extra_orkestlid_info.Orkestgrplst', $ochestraGroupValue)
+      ->addWhere('id', '=', $contactId)
+      ->execute();
+  }
+
+  public static function updateOrchestraMemberYear($contactId) {
+    \Civi\Api4\Contact::update(FALSE)
+      ->addValue('Extra_orkestlid_info.Lid_sinds', date('Y'))
       ->addWhere('id', '=', $contactId)
       ->execute();
   }
